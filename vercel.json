@@ -16,7 +16,8 @@
         "APP_URL": "https://${VERCEL_URL}",
         "APP_KEY": "${APP_KEY}",
         "DB_CONNECTION": "mysql",
-        "SESSION_DRIVER": "cookie",
+        "SESSION_DRIVER": "cookie", 
+        "SESSION_SECURE_COOKIE": "true",
         "LOG_CHANNEL": "stderr"
     }
 }
