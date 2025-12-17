@@ -60,9 +60,9 @@ return [
             'engine' => null,
             // BAGIAN PENTING UNTUK TIDB CLOUD:
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false, // TiDB butuh ini false atau CA yang valid
-            ]) : [],
+    PDO::MYSQL_ATTR_SSL_CA => '/etc/ssl/certs/ca-certificates.crt', // Standard path for Vercel/Linux
+    PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false, // Allow connection without strict cert validation
+]) : [],
         ],
 
         'mariadb' => [
