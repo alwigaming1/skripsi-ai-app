@@ -14,9 +14,9 @@
         "APP_ENV": "production",
         "APP_DEBUG": "true",
         "APP_URL": "https://${VERCEL_URL}",
+        "APP_KEY": "${APP_KEY}",
+        "DB_CONNECTION": "mysql",
         "SESSION_DRIVER": "cookie",
-        "LOG_CHANNEL": "stderr",
-        "ASSET_URL": "https://${VERCEL_URL}",
-        "DB_CONNECTION": "mysql" 
+        "LOG_CHANNEL": "stderr"
     }
 }
