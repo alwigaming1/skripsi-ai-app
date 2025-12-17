@@ -1,0 +1,50 @@
+<?php
+
+// 1. Load Composer
+require __DIR__ . '/../vendor/autoload.php';
+
+// 2. Load Aplikasi
+$app = require_once __DIR__ . '/../bootstrap/app.php';
+
+/* =========================================================
+   FIX VERCEL SERVERLESS (READ-ONLY & CACHE ISSUE)
+   =========================================================
+*/
+
+// A. Paksa Storage ke /tmp (Satu-satunya folder yang bisa ditulis)
+$storage = '/tmp/storage';
+if (!is_dir($storage)) {
+    mkdir($storage . '/framework/views', 0777, true);
+    mkdir($storage . '/framework/sessions', 0777, true);
+    mkdir($storage . '/framework/cache', 0777, true);
+    mkdir($storage . '/logs', 0777, true);
+}
+$app->useStoragePath($storage);
+
+// B. Paksa Laravel Mengabaikan File Cache Bawaan Laptop
+// Kita arahkan pointer cache ke file "/tmp/..." yang pasti kosong.
+// Akibatnya, Laravel akan dipaksa memuat ulang Config & Service Provider dari nol (Fresh).
+$app->useEnvironmentPath('/tmp');
+$_SERVER['APP_CONFIG_CACHE'] = '/tmp/config.php';
+$_SERVER['APP_SERVICES_CACHE'] = '/tmp/services.php';
+$_SERVER['APP_PACKAGES_CACHE'] = '/tmp/packages.php';
+$_SERVER['APP_ROUTES_CACHE'] = '/tmp/routes.php';
+
+// C. Hardcode APP_KEY (Ganti teks di bawah dengan key Anda!)
+$key = 'base64:7nVjl4abxJYdrnyryvJBcNckBFUKI60T5YSluLwB3lE='; // <--- CONTOH: 'base64:XyZ/3uO9a+...'
+putenv('APP_KEY=' . $key);
+$_ENV['APP_KEY'] = $key;
+$_SERVER['APP_KEY'] = $key;
+
+/* ========================================================= */
+
+// 3. Jalankan Aplikasi
+$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+
+$response = $kernel->handle(
+    $request = Illuminate\Http\Request::capture()
+);
+
+$response->send();
+
+$kernel->terminate($request, $response);
