@@ -58,10 +58,10 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            // TAMBAHKAN BAGIAN INI:
+            // BAGIAN PENTING UNTUK TIDB CLOUD:
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false, // Penting untuk TiDB
+                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false, // TiDB butuh ini false atau CA yang valid
             ]) : [],
         ],
 
