@@ -14,6 +14,7 @@ use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\Style\TOC;
 use PhpOffice\PhpWord\Settings;
+
 // Library PDF
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -577,9 +578,22 @@ INSTRUKSI KHUSUS DAFTAR PUSTAKA:
         $project = Project::where('user_id', Auth::id())->findOrFail($id);
         $phpWord = $this->createPhpWordDocument($project, $request->nama, $request->npm, $request->kampus);
         $filename = 'Skripsi_' . str_replace(' ', '_', substr($project->judul, 0, 20)) . '.docx';
-        $file = storage_path('app/public/' . $filename);
-        IOFactory::createWriter($phpWord, 'Word2007')->save($file);
-        return response()->download($file)->deleteFileAfterSend(true);
+       
+        // --- FIX KHUSUS VERCEL ---
+        
+        // 1. Paksa PHPWord pakai folder /tmp untuk proses ZIP
+        \PhpOffice\PhpWord\Settings::setTempDir('/tmp');
+
+        // 2. Tentukan lokasi simpan di /tmp (satu-satunya folder yang bisa ditulis)
+        $path = '/tmp/' . $filename;
+
+        // 3. Simpan file
+        $writer = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+        $writer->save($path);
+
+        // 4. Download dari /tmp lalu hapus
+        return response()->download($path, $filename)->deleteFileAfterSend(true);
+        
     }
 
     public function downloadPdf($id, Request $request) {

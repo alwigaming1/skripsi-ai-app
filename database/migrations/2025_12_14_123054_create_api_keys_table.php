@@ -14,6 +14,7 @@ return new class extends Migration
             $table->id();
             $table->string('key')->unique();
             $table->string('name')->nullable();
+            $table->string('provider')->default('gemini'); // gemini / groq
             $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('usage_count')->default(0);
             $table->timestamps();
